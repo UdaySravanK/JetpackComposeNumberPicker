@@ -1,7 +1,7 @@
 # JetpackComposeNumberPicker
 Compose version of Android NumberPicker
 
-<video src="./assets/demo.gif"></video>
+<img width=300 src="./assets/demo.gif"></img>
 
 Potential Features
 - Support infinite list of items scroll i.e loop of items
