@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -40,20 +40,25 @@ import kotlinx.coroutines.launch
 
 private const val DEFAULT_ITEM_HEIGHT = 48
 private const val DEFAULT_SEPARATOR_HEIGHT = 1
+private val DEFAULT_ITEM_GRADIENT_COLOR = Color.LightGray
 
 /**
  * The compose version of Android [NumberPicker](https://developer.android.com/reference/android/widget/NumberPicker)
  *
  * ItemPicker will show 3 items and treats the middle one as the selected item.
  *
- * @param range The range of integer values
+ * @param range Range of integer values to be displayed in the picker
  * @param value Current selected value i.e the middle value in the picker
- * @param listItemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
  * @param dividerHeight Height of separator lines above and below the middle item to indicate it as the selected item
  * @param dividerColor Color of the middle item separators
- * @param onValueChange A callback to receive the current selected value
+ * @param itemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
+ * @param itemContent A callback to receive the composable content of each item
  * @param selectedItemContentDescription Content description for the middle selected item on focus announcement
  * @param scrollContainerContentDescription Content description for the scroll container on focus announcement
+ * @param overlayTopItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayMiddleItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayBottomItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param onValueChange A callback to receive the current selected value
  * Note: This component will be replaced with the official Compose provided component when available in the future.
  */
 @Composable
@@ -61,12 +66,16 @@ fun NumberPicker(
     range: Iterable<Int>,
     value: Int,
     modifier: Modifier = Modifier,
-    listItemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
     dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
     dividerColor: Color = Color.Red,
     selectedItemContentDescription: String = "",
     scrollContainerContentDescription: String = "",
-    onValueChange: (Int) -> Unit,
+    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
+    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
+    overlayTopItemModifier: Modifier? = null,
+    overlayMiddleItemModifier: Modifier? = null,
+    overlayBottomItemModifier: Modifier? = null,
+    onValueChange: (Int) -> Unit = {},
 ) {
     val items = remember(range) {
         range.map { it.toString() }.toImmutableList()
@@ -75,9 +84,13 @@ fun NumberPicker(
         items = items,
         value = value.toString(),
         modifier = modifier,
-        listItemHeight = listItemHeight,
         dividerHeight = dividerHeight,
         dividerColor = dividerColor,
+        itemHeight = itemHeight,
+        itemContent = itemContent,
+        overlayTopItemModifier = overlayTopItemModifier,
+        overlayMiddleItemModifier = overlayMiddleItemModifier,
+        overlayBottomItemModifier = overlayBottomItemModifier,
         selectedItemContentDescription = selectedItemContentDescription,
         scrollContainerContentDescription = scrollContainerContentDescription,
     ) {
@@ -90,14 +103,18 @@ fun NumberPicker(
  *
  * ItemPicker will show 3 items and treats the middle one as the selected item.
  *
- * @param items The list of items
+ * @param items the list of strings to be displayed in the ItemPicker
  * @param value Current selected value i.e the middle value in the picker
- * @param listItemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
  * @param dividerHeight Height of separator lines above and below the middle item to indicate it as the selected item
  * @param dividerColor Color of the middle item separators
- * @param onValueChange A callback to receive the current selected value
+ * @param itemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
+ * @param itemContent A callback to receive the composable content of each item
  * @param selectedItemContentDescription Content description for the middle selected item on focus announcement
  * @param scrollContainerContentDescription Content description for the scroll container on focus announcement
+ * @param overlayTopItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayMiddleItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayBottomItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param onValueChange A callback to receive the current selected value
  * Note: This component will be replaced with the official Compose provided component when available in the future.
  */
 @Composable
@@ -105,12 +122,16 @@ fun ItemPicker(
     items: ImmutableList<String>,
     value: String,
     modifier: Modifier = Modifier,
-    listItemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
     dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
     dividerColor: Color = Color.Red,
     selectedItemContentDescription: String = "",
     scrollContainerContentDescription: String = "",
-    onValueChange: (String) -> Unit,
+    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
+    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
+    overlayTopItemModifier: Modifier? = null,
+    overlayMiddleItemModifier: Modifier? = null,
+    overlayBottomItemModifier: Modifier? = null,
+    onValueChange: (String) -> Unit = {},
 ) {
     val itemDataList = remember(items) {
         items.map {
@@ -130,9 +151,13 @@ fun ItemPicker(
         items = itemDataList,
         value = itemDataList.first { it.itemText() == value },
         modifier = modifier,
-        listItemHeight = listItemHeight,
         dividerHeight = dividerHeight,
         dividerColor = dividerColor,
+        itemHeight = itemHeight,
+        itemContent = itemContent,
+        overlayTopItemModifier = overlayTopItemModifier,
+        overlayMiddleItemModifier = overlayMiddleItemModifier,
+        overlayBottomItemModifier = overlayBottomItemModifier,
         selectedItemContentDescription = selectedItemContentDescription,
         scrollContainerContentDescription = scrollContainerContentDescription,
     ) {
@@ -147,12 +172,16 @@ fun ItemPicker(
  *
  * @param items The list of items
  * @param value Current selected value i.e the middle value in the picker
- * @param listItemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
  * @param dividerHeight Height of separator lines above and below the middle item to indicate it as the selected item
  * @param dividerColor Color of the middle item separators
- * @param onValueChange A callback to receive the current selected value
+ * @param itemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
+ * @param itemContent A callback to receive the composable content of each item
  * @param selectedItemContentDescription Content description for the middle selected item on focus announcement
  * @param scrollContainerContentDescription Content description for the scroll container on focus announcement
+ * @param overlayTopItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayMiddleItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param overlayBottomItemModifier Modifier to be applied to the top overlay item in the ItemPicker
+ * @param onValueChange A callback to receive the current selected value
  * Note: This component will be replaced with the official Compose provided component when available in the future.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -161,20 +190,27 @@ fun ItemPicker(
     items: ImmutableList<ItemData>,
     value: ItemData,
     modifier: Modifier = Modifier,
-    listItemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
     dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
     dividerColor: Color = Color.Red,
     selectedItemContentDescription: String = "",
     scrollContainerContentDescription: String = "",
+    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
+    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
+    overlayTopItemModifier: Modifier? = null,
+    overlayMiddleItemModifier: Modifier? = null,
+    overlayBottomItemModifier: Modifier? = null,
     onValueChange: (ItemData) -> Unit = {},
 ) {
     val numberOfItemsToVisibleInTheList = 3 // Like the standard NumberPicker, we have considered showing only 3 items from the list at a time
-    val containerHeight = listItemHeight * numberOfItemsToVisibleInTheList + dividerHeight * 2
+    val containerHeight = itemHeight * numberOfItemsToVisibleInTheList + dividerHeight * 2
     val indexOfSelectedItem = items.indexOfFirst { it.uniqueId() == value.uniqueId() }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = if (indexOfSelectedItem != -1) indexOfSelectedItem else 1)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
     val coroutineScope = rememberCoroutineScope()
-
+    val dummyItemData = object : ItemData {
+        override fun itemText() = ""
+        override fun uniqueId() = ""
+    }
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset }
             .map { offset ->
@@ -201,7 +237,8 @@ fun ItemPicker(
                 .height(containerHeight)
                 .semantics {
                     contentDescription = scrollContainerContentDescription
-                }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
                 // Need this to be able to scroll the first item in list to center selector of ItemPicker
@@ -209,9 +246,8 @@ fun ItemPicker(
                     modifier = Modifier
                         .focusable(false)
                         .semantics(mergeDescendants = true) {},
-                    text = "",
-                    listItemHeight = listItemHeight,
-                    textColor = Color.Black,
+                    itemData = dummyItemData,
+                    listItemHeight = itemHeight,
                 )
             }
             items(items) {
@@ -225,8 +261,9 @@ fun ItemPicker(
                                 listState.animateScrollToItem(items.indexOf(it))
                             }
                         },
-                    text = it.itemText(),
-                    listItemHeight = listItemHeight,
+                    itemData = it,
+                    listItemHeight = itemHeight,
+                    content = itemContent,
                 )
             }
             item {
@@ -235,16 +272,18 @@ fun ItemPicker(
                     modifier = Modifier
                         .focusable(false)
                         .semantics(mergeDescendants = true) {},
-                    text = "",
-                    listItemHeight = listItemHeight,
-                    textColor = Color.Black,
+                    itemData = dummyItemData,
+                    listItemHeight = itemHeight,
                 )
             }
         }
         OverlayLayout(
-            listItemHeight = listItemHeight,
+            listItemHeight = itemHeight,
             dividerHeight = dividerHeight,
             dividerColor = dividerColor,
+            topItemModifier = overlayTopItemModifier,
+            middleItemModifier = overlayMiddleItemModifier,
+            bottomItemModifier = overlayBottomItemModifier,
         )
     }
 }
@@ -262,68 +301,83 @@ private fun OverlayLayout(
     listItemHeight: Dp,
     dividerHeight: Dp,
     dividerColor: Color,
+    modifier: Modifier = Modifier,
+    topItemModifier: Modifier? = null,
+    middleItemModifier: Modifier? = null,
+    bottomItemModifier: Modifier? = null,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) {
         // For fade effect on top and bottom items
-        val gradientColor = Color.LightGray
-        val topItemBackground = remember {
-            Brush.verticalGradient(
-                colors = listOf(gradientColor, Color.Transparent),
+        val mTopItemModifier = remember(topItemModifier) {
+            topItemModifier ?: Modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(DEFAULT_ITEM_GRADIENT_COLOR, Color.Transparent),
+                )
             )
         }
-        val bottomItemBackground = remember {
-            Brush.verticalGradient(
-                colors = listOf(Color.Transparent, gradientColor),
+        val mMiddleItemModifier = remember(middleItemModifier) {
+            middleItemModifier ?: Modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, DEFAULT_ITEM_GRADIENT_COLOR),
+                )
+            )
+        }
+        val mBottomItemModifier = remember(bottomItemModifier) {
+            bottomItemModifier ?: Modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, DEFAULT_ITEM_GRADIENT_COLOR),
+                )
             )
         }
         Box(
-            modifier = Modifier
+            modifier = mTopItemModifier
                 .fillMaxWidth()
                 .height(listItemHeight)
-                .background(topItemBackground)
         )
         Divider(
             thickness = dividerHeight,
             color = dividerColor,
         )
-        Box(modifier = Modifier.height(listItemHeight))
+        Box(modifier = mMiddleItemModifier.height(listItemHeight))
         Divider(
             thickness = dividerHeight,
             color = dividerColor,
         )
         Box(
-            modifier = Modifier
+            modifier = mBottomItemModifier
                 .fillMaxWidth()
                 .height(listItemHeight)
-                .background(bottomItemBackground)
         )
     }
 }
 
 @Composable
 private fun ItemView(
-    text: String,
+    itemData: ItemData,
     listItemHeight: Dp,
-    modifier: Modifier = Modifier,
-    textStyle: TextStyle = TextStyle.Default,
-    textColor: Color = Color.Black,
+    modifier: Modifier,
+    content: (@Composable (itemData: ItemData) -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
             .height(listItemHeight)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = text,
-            style = textStyle,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = textColor,
-            textAlign = TextAlign.Center
-        )
+        if (content != null) {
+            content(itemData)
+        } else {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = itemData.itemText(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
