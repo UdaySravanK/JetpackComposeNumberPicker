@@ -1,5 +1,5 @@
 # JetpackComposeNumberPicker
-Compose version of Android NumberPicker
+Highly customizable, compose version of Android NumberPicker
 
 <img width=300 src="./assets/item_picker_demo.gif"></img>
 

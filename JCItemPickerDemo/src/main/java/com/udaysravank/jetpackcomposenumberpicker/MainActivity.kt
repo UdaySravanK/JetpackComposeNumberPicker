@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
@@ -28,14 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.udaysravank.jcitempicker.ItemData
-import com.udaysravank.jcitempicker.ItemPicker
-import com.udaysravank.jcitempicker.NumberPicker
+import com.udaysravank.numberpicker.ItemData
+import com.udaysravank.numberpicker.ItemPicker
+import com.udaysravank.numberpicker.NumberPicker
 import com.udaysravank.jetpackcomposenumberpicker.ui.theme.JetpackComposeNumberPickerTheme
 import kotlinx.collections.immutable.toImmutableList
 
@@ -59,7 +56,7 @@ data class GiftPickerItem(
     val giftValueInDollars: Int,
     val giftName: String,
     val publicVisibleName: String,
-): ItemData {
+): ItemData() {
     override fun itemText(): String {
         return publicVisibleName
     }

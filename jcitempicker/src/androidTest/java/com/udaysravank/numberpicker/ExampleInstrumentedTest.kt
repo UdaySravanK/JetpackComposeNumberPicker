@@ -1,4 +1,4 @@
-package com.udaysravank.jcitempicker
+package com.udaysravank.numberpicker
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

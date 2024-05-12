@@ -1,4 +1,4 @@
-package com.udaysravank.jcitempicker
+package com.udaysravank.numberpicker
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,73 +32,16 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.udaysravank.numberpicker.PreviewData.itemsList
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-private const val DEFAULT_ITEM_HEIGHT = 48
-private const val DEFAULT_SEPARATOR_HEIGHT = 1
-private val DEFAULT_ITEM_GRADIENT_COLOR = Color.LightGray
-
-/**
- * The compose version of Android [NumberPicker](https://developer.android.com/reference/android/widget/NumberPicker)
- *
- * ItemPicker will show 3 items and treats the middle one as the selected item.
- *
- * @param range Range of integer values to be displayed in the picker
- * @param value Current selected value i.e the middle value in the picker
- * @param dividerHeight Height of separator lines above and below the middle item to indicate it as the selected item
- * @param dividerColor Color of the middle item separators
- * @param itemHeight Height of one single item in the picker. The full height of the ItemPicker will be calculated based on this parameter.
- * @param itemContent A callback to receive the composable content of each item
- * @param selectedItemContentDescription Content description for the middle selected item on focus announcement
- * @param scrollContainerContentDescription Content description for the scroll container on focus announcement
- * @param overlayTopItemModifier Modifier to be applied to the top overlay item in the ItemPicker
- * @param overlayMiddleItemModifier Modifier to be applied to the top overlay item in the ItemPicker
- * @param overlayBottomItemModifier Modifier to be applied to the top overlay item in the ItemPicker
- * @param onValueChange A callback to receive the current selected value
- * Note: This component will be replaced with the official Compose provided component when available in the future.
- */
-@Composable
-fun NumberPicker(
-    range: Iterable<Int>,
-    value: Int,
-    modifier: Modifier = Modifier,
-    dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
-    dividerColor: Color = Color.Red,
-    selectedItemContentDescription: String = "",
-    scrollContainerContentDescription: String = "",
-    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
-    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
-    overlayTopItemModifier: Modifier? = null,
-    overlayMiddleItemModifier: Modifier? = null,
-    overlayBottomItemModifier: Modifier? = null,
-    onValueChange: (Int) -> Unit = {},
-) {
-    val items = remember(range) {
-        range.map { it.toString() }.toImmutableList()
-    }
-    ItemPicker(
-        items = items,
-        value = value.toString(),
-        modifier = modifier,
-        dividerHeight = dividerHeight,
-        dividerColor = dividerColor,
-        itemHeight = itemHeight,
-        itemContent = itemContent,
-        overlayTopItemModifier = overlayTopItemModifier,
-        overlayMiddleItemModifier = overlayMiddleItemModifier,
-        overlayBottomItemModifier = overlayBottomItemModifier,
-        selectedItemContentDescription = selectedItemContentDescription,
-        scrollContainerContentDescription = scrollContainerContentDescription,
-    ) {
-        onValueChange(it.toInt())
-    }
-}
 
 /**
  * The compose version of Android [NumberPicker](https://developer.android.com/reference/android/widget/NumberPicker)
@@ -120,8 +65,8 @@ fun NumberPicker(
 @Composable
 fun ItemPicker(
     items: ImmutableList<String>,
-    value: String,
     modifier: Modifier = Modifier,
+    value: String = items.first(),
     dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
     dividerColor: Color = Color.Red,
     selectedItemContentDescription: String = "",
@@ -135,7 +80,7 @@ fun ItemPicker(
 ) {
     val itemDataList = remember(items) {
         items.map {
-            object : ItemData {
+            object : ItemData() {
                 override fun itemText(): String {
                     return it
                 }
@@ -188,8 +133,8 @@ fun ItemPicker(
 @Composable
 fun ItemPicker(
     items: ImmutableList<ItemData>,
-    value: ItemData,
     modifier: Modifier = Modifier,
+    value: ItemData = items.first(),
     dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
     dividerColor: Color = Color.Red,
     selectedItemContentDescription: String = "",
@@ -207,7 +152,7 @@ fun ItemPicker(
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = if (indexOfSelectedItem != -1) indexOfSelectedItem else 1)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
     val coroutineScope = rememberCoroutineScope()
-    val dummyItemData = object : ItemData {
+    val dummyItemData = object : ItemData() {
         override fun itemText() = ""
         override fun uniqueId() = ""
     }
@@ -218,7 +163,11 @@ fun ItemPicker(
                  * firstVisibleItemIndex is not giving the accurate value when scrolling between first 3 elements of list.
                  * Hence, we are using firstVisibleItemScrollOffset with work around logic .
                  */
-                determineTheSelectedItem(offset, listState.firstVisibleItemIndex, items)
+                determineTheSelectedItem(
+                    offset = offset,
+                    position = listState.firstVisibleItemIndex,
+                    items = items,
+                )
             }
             .distinctUntilChanged()
             .collect { item ->
@@ -229,6 +178,12 @@ fun ItemPicker(
     Box(
         modifier = modifier.height(containerHeight)
     ) {
+        /**
+         * Actual number of items in the scrollable list is 2 more than the number of items in the list.
+         * One is for the first blank item in the list and the other is for the last blank item in the list.
+         * So, the first item from the given list can still be in the center of 3 visible items in the ItemPicker. Similarly for the last item.
+         * We don't have to do this if the list is infinite scrolling.
+         */
         LazyColumn(
             state = listState,
             flingBehavior = flingBehavior,
@@ -287,12 +242,24 @@ fun ItemPicker(
         )
     }
 }
+
+@Preview
+@Composable
+fun ItemPickerPreview() {
+    Column(modifier = Modifier.width(200.dp)) {
+        ItemPicker(
+            items = itemsList,
+        ) {
+            // Do nothing
+        }
+    }
+}
  
 /**
  * This component is to draw separator lines above and below the middle item in the ItemPicker. 
  * Separators are to indicate the middle one as the selected item.
  * We can improve the performance of the component by directly drawing lines in the layout phase of composition cycle.
- * Leaving it as is, since this component is an interim solution until the official version of it is available.
+ * Leaving it as is, since this component is an interim solution until the official version of it is available from compose libraries.
  *
  * Feel free to improve, if interested.
  */
@@ -353,6 +320,19 @@ private fun OverlayLayout(
     }
 }
 
+@Preview
+@Composable
+private fun OverlayLayoutPreview() {
+    Column(modifier = Modifier.size(400.dp)) {
+        OverlayLayout(
+            listItemHeight = 50.dp,
+            dividerHeight = 2.dp,
+            dividerColor = Color.Magenta,
+            modifier = Modifier.width(200.dp),
+        )
+    }
+}
+
 @Composable
 private fun ItemView(
     itemData: ItemData,
@@ -379,5 +359,22 @@ private fun ItemView(
                 textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ItemViewPreview() {
+    Column(modifier = Modifier.size(400.dp)) {
+        ItemView(
+            itemData = object : ItemData() {
+                override fun itemText() = "Item 1"
+                override fun uniqueId() = "Item 1"
+            },
+            listItemHeight = 50.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        )
     }
 }

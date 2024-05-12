@@ -1,4 +1,4 @@
-package com.udaysravank.jcitempicker
+package com.udaysravank.numberpicker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Preview
 @Composable
-private fun ItemPickerPreviews() {
+private fun Previews() {
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .padding(32.dp), verticalArrangement = Arrangement.Center) {
