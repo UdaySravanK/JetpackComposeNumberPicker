@@ -1,4 +1,4 @@
-package com.udaysravank.numberpicker
+package com.usk.jcnumberpicker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

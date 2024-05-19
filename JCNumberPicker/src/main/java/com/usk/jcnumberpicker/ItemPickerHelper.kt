@@ -1,4 +1,4 @@
-package com.udaysravank.numberpicker
+package com.usk.jcnumberpicker
 
 import kotlinx.collections.immutable.ImmutableList
 
@@ -48,9 +48,9 @@ import kotlinx.collections.immutable.ImmutableList
  * ```
  */
 internal fun determineTheSelectedItem(
-    offset: Int,
-    position: Int,
-    items: ImmutableList<ItemData>,
+  offset: Int,
+  position: Int,
+  items: ImmutableList<ItemData>,
 ) = if (offset == 0 && position == 0) { getSelectedItem(0, items) } // Case 1
 else if (offset == 0 && position == 1) { getSelectedItem(1, items) } // Case 2
 else if (offset > 0 && position == 0) { getSelectedItem(1, items) } // Case 4

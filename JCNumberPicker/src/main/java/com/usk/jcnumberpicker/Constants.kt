@@ -1,4 +1,4 @@
-package com.udaysravank.numberpicker
+package com.usk.jcnumberpicker
 
 import androidx.compose.ui.graphics.Color
 

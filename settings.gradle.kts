@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "JetpackComposeNumberPicker"
 include(":JCItemPickerDemo")
-include(":jcitempicker")
+include(":JCNumberPicker")

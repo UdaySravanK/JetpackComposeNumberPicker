@@ -1,4 +1,4 @@
-package com.udaysravank.numberpicker
+package com.usk.jcnumberpicker
 
 /**
  * Interface to enforce the must have methods in the data class provided for a list item in the ItemPicker.

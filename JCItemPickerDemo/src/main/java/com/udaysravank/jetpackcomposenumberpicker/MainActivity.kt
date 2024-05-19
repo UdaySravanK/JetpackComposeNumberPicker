@@ -28,12 +28,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.udaysravank.numberpicker.ItemData
-import com.udaysravank.numberpicker.ItemPicker
-import com.udaysravank.numberpicker.NumberPicker
 import com.udaysravank.jetpackcomposenumberpicker.ui.theme.JetpackComposeNumberPickerTheme
+import com.usk.jcnumberpicker.ItemData
+import com.usk.jcnumberpicker.ItemPicker
+import com.usk.jcnumberpicker.NumberPicker
 import kotlinx.collections.immutable.toImmutableList
 
 class MainActivity : ComponentActivity() {
@@ -90,20 +91,20 @@ fun DatePicker(){
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         NumberPicker(
-            modifier = Modifier.weight(1f),
-            range = (0..31),
-            value = 23,
+          modifier = Modifier.weight(1f),
+          range = (0..31),
+          value = 23,
         ) {}
-        ItemPicker(
-            modifier = Modifier.weight(1f),
-            items = months,
-            value = months[5],
-        ) {}
-        NumberPicker(
-            modifier = Modifier.weight(1f),
-            range = (1900..2024),
-            value = 1990,
-        ) {}
+      ItemPicker(
+        modifier = Modifier.weight(1f),
+        items = months,
+        value = months[5],
+      ) {}
+      NumberPicker(
+        modifier = Modifier.weight(1f),
+        range = (1900..2024),
+        value = 1990,
+      ) {}
     }
 }
 
@@ -136,53 +137,60 @@ fun ItemPickerDemoComponent(modifier: Modifier = Modifier) {
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
             Text(text = "Month Picker")
             Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.Center) {
-                ItemPicker(
-                    items = months,
-                    value = months[4],
-                    dividerHeight = 2.dp,
-                    itemHeight = 100.dp,
-                    overlayTopItemModifier = Modifier.background(Brush.verticalGradient(listOf(
-                        Color.Green,
-                        Color.Transparent,
-                    ))),
-                    overlayMiddleItemModifier = Modifier.background(Color.Transparent),
-                    overlayBottomItemModifier = Modifier.background(Brush.verticalGradient(listOf(
-                        Color.Transparent,
-                        Color.Yellow,
-                    ))),
-                ) {}
+              ItemPicker(
+                items = months,
+                value = months[4],
+                dividerHeight = 2.dp,
+                itemHeight = 100.dp,
+                overlayTopItemModifier = Modifier.background(
+                  Brush.verticalGradient(
+                    listOf(
+                      Color.Green,
+                      Color.Transparent,
+                    )
+                  )
+                ),
+                overlayMiddleItemModifier = Modifier.background(Color.Transparent),
+                overlayBottomItemModifier = Modifier.background(
+                  Brush.verticalGradient(
+                    listOf(
+                      Color.Transparent,
+                      Color.Yellow,
+                    )
+                  )
+                ),
+              ) {}
             }
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
             Text(text = "Year Picker")
             Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.Center) {
-                NumberPicker(
-                    modifier = Modifier.width(100.dp),
-                    range = 1900..2100,
-                    value = 2023,
-                    dividerColor = Color.Transparent,
-                ) {}
+              NumberPicker(
+                modifier = Modifier.width(100.dp),
+                range = 1900..2100,
+                value = 2023,
+                dividerColor = Color.Transparent,
+              ) {}
             }
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
             Text(text = "Gift Picker")
             Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.Center) {
-                ItemPicker(
-                    modifier = Modifier.width(120.dp ),
-                    items = gifts.toImmutableList(),
-                    value = luckyGift.value,
-                    itemContent = { data ->
-                        Gem(
-                            modifier = Modifier.size(72.dp),
-                            text = ""
-                        )
-                    },
-                    itemHeight = 120.dp,
-                    dividerHeight = 3.dp,
-                    overlayTopItemModifier = Modifier.background(Color.Transparent),
-                    overlayBottomItemModifier = Modifier.background(Color.Transparent),
-                    overlayMiddleItemModifier = Modifier.background(Color.Transparent),
-                ) { selectedGift ->
-                    luckyGift.value = gifts.first { selectedGift.uniqueId() == it.uniqueId() }
-                }
+              ItemPicker(
+                modifier = Modifier.width(120.dp),
+                items = gifts.toImmutableList(),
+                value = luckyGift.value,
+                itemContent = { _ ->
+                  Gem(
+                    modifier = Modifier.size(72.dp),
+                  )
+                },
+                itemHeight = 120.dp,
+                dividerHeight = 3.dp,
+                overlayTopItemModifier = Modifier.background(Color.Transparent),
+                overlayBottomItemModifier = Modifier.background(Color.Transparent),
+                overlayMiddleItemModifier = Modifier.background(Color.Transparent),
+              ) { selectedGift ->
+                luckyGift.value = gifts.first { selectedGift.uniqueId() == it.uniqueId() }
+              }
             }
             Text(text = "Selected gift worth is ${luckyGift.value.giftValueInDollars}")
         }
@@ -192,7 +200,6 @@ fun ItemPickerDemoComponent(modifier: Modifier = Modifier) {
 @Composable
 fun Gem(
     modifier: Modifier = Modifier,
-    text: String,
 ) {
     Box(
         modifier = modifier
@@ -205,5 +212,13 @@ fun Gem(
         contentAlignment = Alignment.Center,
     ) {
         Text(text = "🎁", style = TextStyle.Default.copy(fontSize = 32.sp))
+    }
+}
+
+@Preview
+@Composable
+fun DatePickerPreview() {
+    JetpackComposeNumberPickerTheme {
+        DatePicker()
     }
 }

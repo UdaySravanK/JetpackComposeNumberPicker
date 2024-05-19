@@ -1,4 +1,4 @@
-package com.udaysravank.numberpicker
+package com.usk.jcnumberpicker
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.udaysravank.numberpicker.PreviewData.itemsList
+import com.usk.jcnumberpicker.PreviewData.itemsList
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -64,19 +64,19 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun ItemPicker(
-    items: ImmutableList<String>,
-    modifier: Modifier = Modifier,
-    value: String = items.first(),
-    dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
-    dividerColor: Color = Color.Red,
-    selectedItemContentDescription: String = "",
-    scrollContainerContentDescription: String = "",
-    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
-    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
-    overlayTopItemModifier: Modifier? = null,
-    overlayMiddleItemModifier: Modifier? = null,
-    overlayBottomItemModifier: Modifier? = null,
-    onValueChange: (String) -> Unit = {},
+  items: ImmutableList<String>,
+  modifier: Modifier = Modifier,
+  value: String = items.first(),
+  dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
+  dividerColor: Color = Color.Red,
+  selectedItemContentDescription: String = "",
+  scrollContainerContentDescription: String = "",
+  itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
+  itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
+  overlayTopItemModifier: Modifier? = null,
+  overlayMiddleItemModifier: Modifier? = null,
+  overlayBottomItemModifier: Modifier? = null,
+  onValueChange: (String) -> Unit = {},
 ) {
     val itemDataList = remember(items) {
         items.map {
@@ -132,19 +132,19 @@ fun ItemPicker(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemPicker(
-    items: ImmutableList<ItemData>,
-    modifier: Modifier = Modifier,
-    value: ItemData = items.first(),
-    dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
-    dividerColor: Color = Color.Red,
-    selectedItemContentDescription: String = "",
-    scrollContainerContentDescription: String = "",
-    itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
-    itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
-    overlayTopItemModifier: Modifier? = null,
-    overlayMiddleItemModifier: Modifier? = null,
-    overlayBottomItemModifier: Modifier? = null,
-    onValueChange: (ItemData) -> Unit = {},
+  items: ImmutableList<ItemData>,
+  modifier: Modifier = Modifier,
+  value: ItemData = items.first(),
+  dividerHeight: Dp = DEFAULT_SEPARATOR_HEIGHT.dp,
+  dividerColor: Color = Color.Red,
+  selectedItemContentDescription: String = "",
+  scrollContainerContentDescription: String = "",
+  itemHeight: Dp = DEFAULT_ITEM_HEIGHT.dp,
+  itemContent: (@Composable (itemData: ItemData) -> Unit)? = null,
+  overlayTopItemModifier: Modifier? = null,
+  overlayMiddleItemModifier: Modifier? = null,
+  overlayBottomItemModifier: Modifier? = null,
+  onValueChange: (ItemData) -> Unit = {},
 ) {
     val numberOfItemsToVisibleInTheList = 3 // Like the standard NumberPicker, we have considered showing only 3 items from the list at a time
     val containerHeight = itemHeight * numberOfItemsToVisibleInTheList + dividerHeight * 2
@@ -335,10 +335,10 @@ private fun OverlayLayoutPreview() {
 
 @Composable
 private fun ItemView(
-    itemData: ItemData,
-    listItemHeight: Dp,
-    modifier: Modifier,
-    content: (@Composable (itemData: ItemData) -> Unit)? = null,
+  itemData: ItemData,
+  listItemHeight: Dp,
+  modifier: Modifier,
+  content: (@Composable (itemData: ItemData) -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
